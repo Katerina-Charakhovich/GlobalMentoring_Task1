@@ -3,7 +3,6 @@ package apllication;
 import jmp.bank.api.Bank;
 import jmp.cloud.bank.impl.BankImpl;
 import jmp.cloud.service.exception.ServiceException;
-import jmp.cloud.service.impl.ServiceImpl;
 import jmp.dto.BankCardDto;
 import jmp.dto.BankCardType;
 import jmp.dto.SubscriptionDto;
@@ -25,10 +24,11 @@ public class Application {
         UserService userService = new UserService();
         SubscriptionService subscriptionService = new SubscriptionService();
         BankCardService bankCardService = new BankCardService();
-        Service service = new ServiceImpl();
-//        Service service = ServiceLoader
-//                .load(ServiceImpl.class)
-//                .findFirst().orElseThrow(RuntimeException::new);
+      //  Service service = new ServiceImpl();
+        Service service = ServiceLoader
+                .load(Service.class)
+                .findFirst().orElseThrow(RuntimeException::new);
+        System.out.println("Task 26.Loader. Class: "+service.getClass().getSimpleName());
 
         var user = new UserDto("Yana", "Bahdanovich", LocalDate.parse("1980-05-05"));
         var user1 = new UserDto("James", "Smith", LocalDate.parse("2015-05-05"));

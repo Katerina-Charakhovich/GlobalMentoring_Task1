@@ -9,25 +9,23 @@ import jmp.dto.UserDto;
 import jmp.main.service.BankCardService;
 
 import java.util.Random;
+import java.util.function.BiFunction;
+
+import static jmp.dto.BankCardType.CREDIT;
 
 public class BankImpl implements Bank {
     private static final BankCardService bankCardService = new BankCardService();
+
     @Override
     public BankCardDto createBankCard(UserDto user, BankCardType cardType) {
-        switch (cardType) {
-            case CREDIT: {
-                CreditBankCard creditBankCard = new CreditBankCard( getCardNumber(),user);
-                bankCardService.save(creditBankCard,cardType);
-                return creditBankCard;
-            }
-            case DEBIT: {
-                DebitBankCard debitBankCard = new DebitBankCard( getCardNumber(),user);
-                bankCardService.save(debitBankCard,cardType);
-                return debitBankCard;
-            }
-            default:
-                return null;
-        }
+        BiFunction<String, UserDto, BankCardDto> creditCard = CreditBankCard::new;
+        BiFunction<String, UserDto, BankCardDto> debitCard = DebitBankCard::new;
+
+        BankCardDto bankCardDto = cardType.equals(CREDIT)
+                ? creditCard.apply(getCardNumber(), user)
+                : debitCard.apply(getCardNumber(), user);
+        bankCardService.save(bankCardDto, cardType);
+        return bankCardDto;
     }
     private static String getCardNumber(){
         long min = 1000000000000L; //13 digits inclusive
